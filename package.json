@@ -2,7 +2,7 @@
   "name": "wargy",
   "version": "0.0.1",
   "description": "Turn argparse-based Python CLI programs into beautiful, modern React+Flask web apps",
-  "main": "src/main.js",
+  "main": "public/dist/app.js",
   "author": "Tavi Nathanson <tavi.nathanson@gmail.com>",
   "license": "Apache 2.0",
   "dependencies": {
