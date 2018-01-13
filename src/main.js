@@ -42,7 +42,7 @@ class ArgumentComponent extends React.Component {
     }
 }
 
-class InputComponent extends React.Component {
+export class InputComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -102,5 +102,3 @@ class InputComponent extends React.Component {
         }
     }
 }
-
-export default InputComponent;

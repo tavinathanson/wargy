@@ -20267,6 +20267,7 @@ exports.default = _Portal2.default;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InputComponent", function() { return InputComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_antd_es_upload_style_css__ = __webpack_require__(317);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_antd_es_upload__ = __webpack_require__(328);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_semantic_ui_react_dist_commonjs_modules_Popup_Popup__ = __webpack_require__(514);
@@ -20449,8 +20450,6 @@ var InputComponent = function (_React$Component2) {
 
     return InputComponent;
 }(__WEBPACK_IMPORTED_MODULE_7_react___default.a.Component);
-
-/* harmony default export */ __webpack_exports__["default"] = (InputComponent);
 
 /***/ }),
 /* 317 */

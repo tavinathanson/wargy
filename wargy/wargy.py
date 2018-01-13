@@ -1,20 +1,10 @@
-from flask import Flask, jsonify, render_template
+from flask import jsonify
 from os import path
 from collections import OrderedDict
 
-dir_path = path.dirname(path.realpath(__file__))
-template_folder = path.join(path.dirname(dir_path), "public")
-static_folder = path.join(template_folder, "dist")
-app = Flask(__name__, template_folder=template_folder,
-            static_folder=static_folder,
-            static_url_path="/static")
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
 class Wargy(object):
     def __init__(self,
+                 app,
                  parser,
                  all_caps_words,
                  excluded_arg_groups):
