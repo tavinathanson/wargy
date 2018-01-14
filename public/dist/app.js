@@ -20350,13 +20350,13 @@ var ArgumentComponent = function (_React$Component) {
     return ArgumentComponent;
 }(__WEBPACK_IMPORTED_MODULE_7_react___default.a.Component);
 
-var InputComponent = function (_React$Component2) {
-    _inherits(InputComponent, _React$Component2);
+var InputComponent2 = function (_React$Component2) {
+    _inherits(InputComponent2, _React$Component2);
 
-    function InputComponent(props) {
-        _classCallCheck(this, InputComponent);
+    function InputComponent2(props) {
+        _classCallCheck(this, InputComponent2);
 
-        var _this2 = _possibleConstructorReturn(this, (InputComponent.__proto__ || Object.getPrototypeOf(InputComponent)).call(this, props));
+        var _this2 = _possibleConstructorReturn(this, (InputComponent2.__proto__ || Object.getPrototypeOf(InputComponent2)).call(this, props));
 
         _this2.state = {
             error: null,
@@ -20366,7 +20366,7 @@ var InputComponent = function (_React$Component2) {
         return _this2;
     }
 
-    _createClass(InputComponent, [{
+    _createClass(InputComponent2, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
             var _this3 = this;
@@ -20445,6 +20445,29 @@ var InputComponent = function (_React$Component2) {
                     elements
                 );
             }
+        }
+    }]);
+
+    return InputComponent2;
+}(__WEBPACK_IMPORTED_MODULE_7_react___default.a.Component);
+
+var InputComponent = function (_React$Component3) {
+    _inherits(InputComponent, _React$Component3);
+
+    function InputComponent() {
+        _classCallCheck(this, InputComponent);
+
+        return _possibleConstructorReturn(this, (InputComponent.__proto__ || Object.getPrototypeOf(InputComponent)).apply(this, arguments));
+    }
+
+    _createClass(InputComponent, [{
+        key: 'render',
+        value: function render() {
+            return __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(
+                'p',
+                null,
+                'Test'
+            );
         }
     }]);
 
