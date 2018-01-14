@@ -42,7 +42,7 @@ class ArgumentComponent extends React.Component {
     }
 }
 
-class InputComponent2 extends React.Component {
+export class InputComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -100,11 +100,5 @@ class InputComponent2 extends React.Component {
 
             return <Grid columns={2} stackable>{elements}</Grid>;
         }
-    }
-}
-
-export class InputComponent extends React.Component {
-    render() {
-        return (<p>Test</p>);
     }
 }
