@@ -1,10 +1,26 @@
+import _ from 'lodash';
 import React from 'react';
 import { render } from 'react-dom';
 import { Button, Input, Container, Checkbox, Header, Menu, Dropdown, Image,
          Table, Grid, Segment, Dimmer, Popup, Label } from 'semantic-ui-react';
-
 import { Upload, Icon, message } from 'antd';
 const Dragger = Upload.Dragger;
+
+const FILE_WORDS = ['file', 'path'];
+
+function argContainsWords(arg, words) {
+    var parts = _.split(_.lowerCase(arg), /[ \-_]+/);
+
+    // If any part of the argument contains a word, return true
+    var returnVal = false;
+    _.each(words, function(word) {
+        if (_.includes(parts, word)) {
+            returnVal = true;
+        }
+    });
+
+    return returnVal;
+}
 
 class ArgumentComponent extends React.Component {
     constructor(props) {
@@ -13,22 +29,25 @@ class ArgumentComponent extends React.Component {
 
     render() {
         const iStyle = {
-            maxWidth: "100%", whiteSpace: "nowrap", overflow: "hidden"
+            maxWidth: '100%', whiteSpace: 'nowrap', overflow: 'hidden'
         };
         var innerComponent = null;
-        if (typeof(this.props.arg.default) === "boolean" || this.props.arg.type === "bool") {
+        if (typeof(this.props.arg.default) === 'boolean' || this.props.arg.type === 'bool') {
             innerComponent = <Checkbox toggle label={this.props.arg.human_arg} />;
         }
-        else if (typeof(this.props.arg.default) === "number" ||
-                 this.props.arg.type === "float" ||
-                 this.props.arg.type == "int") {
-            innerComponent = <Input label={this.props.arg.human_arg} style={iStyle} labelPosition="right" />;
+        else if (typeof(this.props.arg.default) === 'number' ||
+                 this.props.arg.type === 'float' ||
+                 this.props.arg.type == 'int') {
+            innerComponent = <Input label={this.props.arg.human_arg} style={iStyle} labelPosition='right' />;
+        }
+        else if (argContainsWords(this.props.arg.arg, FILE_WORDS)) {
+            innerComponent = <p style={iStyle}>File: {this.props.arg.human_arg}</p>;
         }
         else {
             innerComponent = <p style={iStyle}>{this.props.arg.human_arg}</p>;
         }
 
-        var component = <Popup trigger={innerComponent} content={this.props.arg.human_arg + ": " + this.props.arg.help} />;
+        var component = <Popup trigger={innerComponent} content={this.props.arg.human_arg + ': ' + this.props.arg.help} />;
         return (
             <Segment>
                 {component}
@@ -48,7 +67,7 @@ export class InputComponent extends React.Component {
     }
 
     componentDidMount() {
-        fetch("/wargy/api/v0.0.1/args")
+        fetch('/wargy/api/v0.0.1/args')
             .then(res => res.json())
             .then(
                 (result) => { this.setState({isLoaded: true, args: result.args}); },
@@ -86,7 +105,7 @@ export class InputComponent extends React.Component {
                 elements.push(
                     <Grid.Column key={i}>
                         <Segment.Group>
-                            <Segment color="violet"><h2>{group_name}</h2></Segment>
+                            <Segment color='violet'><h2>{group_name}</h2></Segment>
                             {group_elements[group_name]}
                         </Segment.Group>
                     </Grid.Column>
