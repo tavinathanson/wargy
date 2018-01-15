@@ -73,7 +73,14 @@ class ArgumentComponent extends React.Component {
             innerComponent = <p>{this.props.arg.human_arg}</p>;
         }
 
-        var component = <Popup trigger={innerComponent} content={this.props.arg.human_arg + ': ' + this.props.arg.help} />;
+        var component = innerComponent;
+        if (!_.isEmpty(this.props.arg.help)) {
+            component = <Popup
+                                inverted
+                                size='mini'
+                                trigger={innerComponent}
+                                content={this.props.arg.help} />;
+        }
         return component;
     }
 }
@@ -127,7 +134,7 @@ export class InputComponent extends React.Component {
 
             group_names.map(function(group_name, i) {
                 elements.push(
-                    <Segment.Group>
+                    <Segment.Group key={i}>
                         <Segment color='violet'><h2>{group_name}</h2></Segment>
                         <Segment>
                             <Form>
