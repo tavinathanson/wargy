@@ -15,25 +15,20 @@ class ArgumentComponent extends React.Component {
         const iStyle = {
             maxWidth: "100%", whiteSpace: "nowrap", overflow: "hidden"
         };
-        var component = null;
+        var innerComponent = null;
         if (typeof(this.props.arg.default) === "boolean" || this.props.arg.type === "bool") {
-            component = <Popup
-                            trigger={<Checkbox toggle label={this.props.arg.human_arg} />}
-                            content={this.props.arg.human_arg + ": " + this.props.arg.help}
-            />;
+            innerComponent = <Checkbox toggle label={this.props.arg.human_arg} />;
         }
         else if (typeof(this.props.arg.default) === "number" ||
                  this.props.arg.type === "float" ||
                  this.props.arg.type == "int") {
-            component = <Popup
-            trigger={<Input label={this.props.arg.human_arg} style={iStyle} labelPosition="right" />}
-            content={this.props.arg.human_arg + ": " + this.props.arg.help}
-            />;
+            innerComponent = <Input label={this.props.arg.human_arg} style={iStyle} labelPosition="right" />;
         }
         else {
-            component = <p style={iStyle}>{this.props.arg.human_arg}</p>;
+            innerComponent = <p style={iStyle}>{this.props.arg.human_arg}</p>;
         }
 
+        var component = <Popup trigger={innerComponent} content={this.props.arg.human_arg + ": " + this.props.arg.help} />;
         return (
             <Segment>
                 {component}
