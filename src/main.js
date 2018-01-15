@@ -42,7 +42,8 @@ class ArgumentComponent extends React.Component {
                 </Form.Field>
             );
         }
-        else if (argContainsWords(this.props.arg.arg, FILE_WORDS)) {
+        else if (this.props.arg.type === 'file' ||
+                 argContainsWords(this.props.arg.arg, FILE_WORDS)) {
             const props = {
                 name: 'file',
                 action: '//jsonplaceholder.typicode.com/posts/',
@@ -70,16 +71,21 @@ class ArgumentComponent extends React.Component {
             );
         }
         else {
-            innerComponent = <p>{this.props.arg.human_arg}</p>;
+            innerComponent = (
+                <Form.Field>
+                    <label> {this.props.arg.human_arg}</label>
+                    <Input size='small' />
+                </Form.Field>
+            );
         }
 
         var component = innerComponent;
         if (!_.isEmpty(this.props.arg.help)) {
             component = <Popup
-                                inverted
-                                size='mini'
-                                trigger={innerComponent}
-                                content={this.props.arg.help} />;
+                            inverted
+                            size='mini'
+                            trigger={innerComponent}
+                            content={this.props.arg.help} />;
         }
         return component;
     }

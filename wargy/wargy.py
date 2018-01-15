@@ -6,10 +6,12 @@ class Wargy(object):
     def __init__(self,
                  app,
                  parser,
+                 arg_types_override,
                  all_caps_words,
                  excluded_arg_groups):
         self.app = app
         self.parser = parser
+        self.arg_types_override = arg_types_override
         self.all_caps_words = all_caps_words
         self.excluded_arg_groups = excluded_arg_groups
 
@@ -42,7 +44,11 @@ class Wargy(object):
             arg_obj["human_arg"] = self.to_human_arg_name(action.dest)
             arg_obj["help"] = action.help
             arg_obj["default"] = action.default
+
             arg_obj["type"] = str(action.type.__name__) if action.type is not None else None
+            if action.dest in self.arg_types_override:
+                arg_obj["type"] = self.arg_types_override[action.dest]
+
             d[group_title].append(arg_obj)
 
         # Convert OrderedDict into a list of dicts, which can be jsonified in order.
