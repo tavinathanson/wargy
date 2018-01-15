@@ -3,7 +3,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Button, Input, Container, Checkbox, Header, Menu, Dropdown, Image,
          Table, Grid, Segment, Dimmer, Popup, Label } from 'semantic-ui-react';
-import { Upload, Icon, message } from 'antd';
+import { Upload, Icon, Button as AntButton, message } from 'antd';
 const Dragger = Upload.Dragger;
 
 const FILE_WORDS = ['file', 'path'];
@@ -41,7 +41,28 @@ class ArgumentComponent extends React.Component {
             innerComponent = <Input label={this.props.arg.human_arg} style={iStyle} labelPosition='right' />;
         }
         else if (argContainsWords(this.props.arg.arg, FILE_WORDS)) {
-            innerComponent = <p style={iStyle}>File: {this.props.arg.human_arg}</p>;
+            const props = {
+                name: 'file',
+                action: '//jsonplaceholder.typicode.com/posts/',
+                headers: {
+                    authorization: 'authorization-text',
+                },
+                onChange(info) {
+                    if (info.file.status === 'done') {
+                        message.success(`${info.file.name} uploaded successfully.`);
+                    } else if (info.file.status === 'error') {
+                        message.error(`${info.file.name} upload failed.`);
+                    }
+                },
+            };
+
+            innerComponent = (
+                <Upload {...props}>
+                    <AntButton>
+                        <Icon type="upload" />Upload {this.props.arg.human_arg}
+                    </AntButton>
+                </Upload>
+            );
         }
         else {
             innerComponent = <p style={iStyle}>{this.props.arg.human_arg}</p>;
