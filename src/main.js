@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import { render } from 'react-dom';
 import { Button, Input, Container, Checkbox, Header, Menu, Dropdown, Image,
-         Table, Grid, Segment, Dimmer, Popup, Label } from 'semantic-ui-react';
+         Table, Grid, Segment, Dimmer, Popup, Label, Form } from 'semantic-ui-react';
 import { Upload, Icon, Button as AntButton, message } from 'antd';
 const Dragger = Upload.Dragger;
 
@@ -28,9 +28,6 @@ class ArgumentComponent extends React.Component {
     }
 
     render() {
-        const iStyle = {
-            maxWidth: '100%', whiteSpace: 'nowrap', overflow: 'hidden'
-        };
         var innerComponent = null;
         if (typeof(this.props.arg.default) === 'boolean' || this.props.arg.type === 'bool') {
             innerComponent = <Checkbox toggle label={this.props.arg.human_arg} />;
@@ -38,7 +35,12 @@ class ArgumentComponent extends React.Component {
         else if (typeof(this.props.arg.default) === 'number' ||
                  this.props.arg.type === 'float' ||
                  this.props.arg.type == 'int') {
-            innerComponent = <Input label={this.props.arg.human_arg} style={iStyle} labelPosition='right' />;
+            innerComponent = (
+                <Form.Field>
+                    <label> {this.props.arg.human_arg}</label>
+                    <Input size='small' />
+                </Form.Field>
+            );
         }
         else if (argContainsWords(this.props.arg.arg, FILE_WORDS)) {
             const props = {
@@ -57,23 +59,22 @@ class ArgumentComponent extends React.Component {
             };
 
             innerComponent = (
-                <Upload {...props}>
-                    <AntButton>
-                        <Icon type="upload" />Upload {this.props.arg.human_arg}
-                    </AntButton>
-                </Upload>
+                <Form.Field>
+                    <label> {this.props.arg.human_arg}</label>
+                    <Upload {...props}>
+                        <AntButton>
+                            <Icon type='upload' />Upload File
+                        </AntButton>
+                    </Upload>
+                </Form.Field>
             );
         }
         else {
-            innerComponent = <p style={iStyle}>{this.props.arg.human_arg}</p>;
+            innerComponent = <p>{this.props.arg.human_arg}</p>;
         }
 
         var component = <Popup trigger={innerComponent} content={this.props.arg.human_arg + ': ' + this.props.arg.help} />;
-        return (
-            <Segment>
-                {component}
-            </Segment>
-        );
+        return component;
     }
 }
 
@@ -117,23 +118,29 @@ export class InputComponent extends React.Component {
                 group_elements[group_name] = [];
                 group_values.map(function(arg, arg_i) {
                     group_elements[group_name].push(
-                        <ArgumentComponent key={arg_i} arg={arg} />
+                        <Grid.Column key={arg_i}>
+                            <ArgumentComponent arg={arg} />
+                        </Grid.Column>
                     );
                 });
             });
 
             group_names.map(function(group_name, i) {
                 elements.push(
-                    <Grid.Column key={i}>
-                        <Segment.Group>
-                            <Segment color='violet'><h2>{group_name}</h2></Segment>
-                            {group_elements[group_name]}
-                        </Segment.Group>
-                    </Grid.Column>
+                    <Segment.Group>
+                        <Segment color='violet'><h2>{group_name}</h2></Segment>
+                        <Segment>
+                            <Form>
+                                <Grid columns={2}>
+                                    {group_elements[group_name]}
+                                </Grid>
+                            </Form>
+                        </Segment>
+                    </Segment.Group>
                 );
             });
 
-            return <Grid columns={2} stackable>{elements}</Grid>;
+            return <Container text>{elements}</Container>;
         }
     }
 }
