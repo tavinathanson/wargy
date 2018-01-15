@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import { render } from 'react-dom';
 import { Button, Input, Container, Checkbox, Header, Menu, Dropdown, Image,
-         Table, Grid, Segment, Dimmer, Popup, Label, Form } from 'semantic-ui-react';
+         Table, Grid, Segment, Dimmer, Popup, Label, Form, Loader } from 'semantic-ui-react';
 import { Upload, Icon, Button as AntButton, message } from 'antd';
 const Dragger = Upload.Dragger;
 
@@ -113,9 +113,9 @@ export class InputComponent extends React.Component {
     render() {
         const { error, isLoaded, args } = this.state;
         if (error) {
-            return <p>Error: {error.message}</p>;
+            return <Container><p>Error: {error.message}</p></Container>;
         } else if (!isLoaded) {
-            return <p>Loading...</p>;
+            return <Loader active inline='centered'>Loading</Loader>;
         } else {
             var elements = [];
             var group_names = [];
