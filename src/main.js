@@ -38,7 +38,9 @@ class ArgumentComponent extends React.Component {
             innerComponent = (
                 <Form.Field>
                     <label> {this.props.arg.human_arg}</label>
-                    <Input size='small' />
+                    <Input size='small'
+                           onChange={(e) => this.props.handleChange(this.props.arg.arg, e)}
+                           value={this.props.inputValue} />
                 </Form.Field>
             );
         }
@@ -99,6 +101,33 @@ export class InputComponent extends React.Component {
             isLoaded: false,
             expanded: true
         };
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    /*
+    handleSubmit = event => {
+        event.preventDefault();
+
+        var fetchOptions = {
+            method: 'POST',
+            headers,
+            body: formData
+        };
+
+        axios
+            .get(`https://api.github.com/users/${this.state.userName}`)
+            .then(resp => {
+                this.props.onSubmit(resp.data);
+                this.setState({ userName: "" });
+            });
+    };
+     */
+
+    handleChange(arg, event) {
+        var obj = {};
+        obj[arg] = event.target.value;
+        this.setState(obj);
+        console.log(this.state);
     }
 
     componentDidMount() {
@@ -115,11 +144,12 @@ export class InputComponent extends React.Component {
         if (error) {
             return <Container><p>Error: {error.message}</p></Container>;
         } else if (!isLoaded) {
-            return <Loader active inline='centered'>Loading</Loader>;
+            return <Loader active inline='centered'>Loading...</Loader>;
         } else {
             var elements = [];
             var group_names = [];
             var group_elements = {};
+            var self = this; // Make accessible in the closure below
             args.map(function(arg_group, i) {
                 // Arg group names
                 var first_entry = Object.entries(arg_group)[0];
@@ -130,9 +160,16 @@ export class InputComponent extends React.Component {
                 var group_values = first_entry[1];
                 group_elements[group_name] = [];
                 group_values.map(function(arg, arg_i) {
+                    // The state doesn't have a default for every possible argument,
+                    // which results in "Warning: A component is changing an uncontrolled..."
+                    // _.defaultTo fixes that.
+                    // TODO: use result.args when fetched to populate the state correctly.
+                    var inputValue = _.defaultTo(self.state[arg.arg], "");
                     group_elements[group_name].push(
                         <Grid.Column key={arg_i}>
-                            <ArgumentComponent arg={arg} />
+                            <ArgumentComponent arg={arg}
+                                               handleChange={self.handleChange}
+                                               inputValue={inputValue} />
                         </Grid.Column>
                     );
                 });
