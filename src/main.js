@@ -32,8 +32,7 @@ class ArgumentComponent extends React.Component {
         if (typeof(this.props.arg.default) === 'boolean' || this.props.arg.type === 'bool') {
             innerComponent = <Checkbox toggle
                                        label={this.props.arg.human_arg}
-                                       onChange={(e, { checked }) => this.props.handleChange(this.props.arg.arg, e, checked)}
-                                       value={this.props.inputValue} />;
+                                       onChange={(e, { checked }) => this.props.handleChange(this.props.arg.arg, e, checked)} />;
         }
         else if (typeof(this.props.arg.default) === 'number' ||
                  this.props.arg.type === 'float' ||
@@ -42,8 +41,7 @@ class ArgumentComponent extends React.Component {
                 <Form.Field>
                     <label> {this.props.arg.human_arg}</label>
                     <Input size='small'
-                           onChange={(e) => this.props.handleChange(this.props.arg.arg, e)}
-                           value={this.props.inputValue} />
+                           onChange={(e) => this.props.handleChange(this.props.arg.arg, e)} />
                 </Form.Field>
             );
         }
@@ -79,7 +77,8 @@ class ArgumentComponent extends React.Component {
             innerComponent = (
                 <Form.Field>
                     <label> {this.props.arg.human_arg}</label>
-                    <Input size='small' />
+                    <Input size='small'
+                           onChange={(e) => this.props.handleChange(this.props.arg.arg, e)} />
                 </Form.Field>
             );
         }
@@ -158,16 +157,10 @@ export class InputComponent extends React.Component {
                 var group_values = first_entry[1];
                 group_elements[group_name] = [];
                 group_values.map(function(arg, arg_i) {
-                    // The state doesn't have a default for every possible argument,
-                    // which results in "Warning: A component is changing an uncontrolled..."
-                    // _.defaultTo fixes that.
-                    // TODO: use result.args when fetched to populate the state correctly.
-                    var inputValue = _.defaultTo(self.state[arg.arg], "");
                     group_elements[group_name].push(
                         <Grid.Column key={arg_i}>
                             <ArgumentComponent arg={arg}
-                                               handleChange={self.handleChange}
-                                               inputValue={inputValue} />
+                                               handleChange={self.handleChange} />
                         </Grid.Column>
                     );
                 });
@@ -182,12 +175,19 @@ export class InputComponent extends React.Component {
                                 <Grid columns={2}>
                                     {group_elements[group_name]}
                                 </Grid>
-                                <Button onClick={self.handleSubmit}>Submit</Button>
                             </Form>
                         </Segment>
                     </Segment.Group>
                 );
             });
+            elements.push(
+                <Segment key='formfooter'>
+                    <Form>
+                        <Button onClick={self.handleSubmit}>Submit</Button>
+                        <Button>Clear</Button>
+                    </Form>
+                </Segment>
+            );
 
             return <Container text>{elements}</Container>;
         }
