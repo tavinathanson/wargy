@@ -111,19 +111,19 @@ export class OutputComponent extends React.Component {
             var colName = firstEntry[0];
             var colValues = firstEntry[1];
 
-            headerCells.push(<Table.HeaderCell>{colName}</Table.HeaderCell>);
+            headerCells.push(<Table.HeaderCell key={col_i}>{colName}</Table.HeaderCell>);
 
             colValues.map(function(colValue, row_i) {
                 if (_.isUndefined(rowToCells[row_i])) {
                     rowToCells[row_i] = [];
                 }
-                rowToCells[row_i].push(<Table.Cell>{colValue}</Table.Cell>);
+                rowToCells[row_i].push(<Table.Cell key={col_i}>{colValue}</Table.Cell>);
             });
         });
 
         var tableElements = [];
         tableElements.push(
-            <Table.Header>
+            <Table.Header key='tableheader'>
                 <Table.Row>
                     {headerCells}
                 </Table.Row>
@@ -133,25 +133,27 @@ export class OutputComponent extends React.Component {
         var rowElements = [];
         // TODO: make map vs. each usage consistent
         // Iterate in numerical row order over the table
-        _.each(_.range(_size(rowToCells)), function(rowNum) {
+        _.each(_.range(_.size(rowToCells)), function(rowNum) {
             var tableCells = rowToCells[rowNum];
             rowElements.push(
-                <Table.Row>
+                <Table.Row key={rowNum}>
                     {tableCells}
                 </Table.Row>
             );
         });
 
         tableElements.push(
-            <Table.Body>
+            <Table.Body key='tablebody'>
                 {rowElements}
             </Table.Body>
         );
 
         return (
-            <Table celled>
-                {tableElements}
+            <div style={{"overflowX": "scroll"}}>
+            <Table compact size='small'>
+            {tableElements}
             </Table>
+            </div>
         );
     }
 }
@@ -173,7 +175,7 @@ export class InputComponent extends React.Component {
         event.preventDefault();
 
         // TODO: don't hardcode this; too fragile
-        var body = JSON.stringify(_.omit(this.state, ['error', 'isLoaded', 'isTableLoaded', 'expanded', 'args']));
+        var body = JSON.stringify(_.omit(this.state, ['error', 'isLoaded', 'isTableLoaded', 'tableContents', 'expanded', 'args']));
         fetch('/wargy/api/v0.0.1/submit', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
@@ -259,6 +261,10 @@ export class InputComponent extends React.Component {
                     </Form>
                 </Segment>
             );
+
+            if (this.state.isTableLoaded) {
+                elements.push(<OutputComponent contents={this.state.tableContents} />);
+            }
 
             return <Container text>{elements}</Container>;
         }

@@ -28,7 +28,7 @@ class Wargy(object):
         def submit_endpoint():
             # TODO: do something instead of assuming a DataFrame
             df = self.process_submission(request.json)
-            return jsonify({"table_contents": df.to_dict("list")})
+            return jsonify({"table_contents": df_to_dict(df)})
         self.app.add_url_rule(
             "/wargy/api/v0.0.1/submit",
             methods=["POST"],
@@ -88,3 +88,9 @@ class Wargy(object):
         print(args_list)
         args = self.parser.parse_args(args_list)
         return self.submission_handler(args)
+
+def df_to_dict(df):
+    items = []
+    for col in df.columns:
+        items.append({col: df[col].tolist()})
+    return items
