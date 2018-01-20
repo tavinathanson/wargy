@@ -102,26 +102,18 @@ export class InputComponent extends React.Component {
             expanded: true
         };
         this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    /*
-    handleSubmit = event => {
+    handleSubmit(event) {
         event.preventDefault();
 
-        var fetchOptions = {
-            method: 'POST',
-            headers,
-            body: formData
-        };
-
-        axios
-            .get(`https://api.github.com/users/${this.state.userName}`)
-            .then(resp => {
-                this.props.onSubmit(resp.data);
-                this.setState({ userName: "" });
-            });
+        var body = JSON.stringify(_.omit(this.state, ['error', 'isLoaded', 'expanded', 'args']));
+        fetch('/wargy/api/v0.0.1/submit', {
+            method: 'post',
+            headers: {'Content-Type':'application/json'},
+            body: body});
     };
-     */
 
     handleChange(arg, event) {
         var obj = {};
@@ -184,6 +176,7 @@ export class InputComponent extends React.Component {
                                 <Grid columns={2}>
                                     {group_elements[group_name]}
                                 </Grid>
+                                <Button onClick={self.handleSubmit}>Submit</Button>
                             </Form>
                         </Segment>
                     </Segment.Group>

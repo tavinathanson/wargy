@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 from os import path
 from collections import OrderedDict
 
@@ -14,13 +14,22 @@ class Wargy(object):
         self.arg_types_override = arg_types_override
         self.all_caps_words = all_caps_words
         self.excluded_arg_groups = excluded_arg_groups
+        self.submitted = {}
 
-        def args_view():
+        def args_endpoint():
             return self.arg_parser_to_json(parser=self.parser)
         self.app.add_url_rule(
             "/wargy/api/v0.0.1/args",
             methods=["GET"],
-            view_func=args_view)
+            view_func=args_endpoint)
+
+        def submit_endpoint():
+            self.process_submission(request.json)
+            return "OK"
+        self.app.add_url_rule(
+            "/wargy/api/v0.0.1/submit",
+            methods=["POST"],
+            view_func=submit_endpoint)
 
     def arg_parser_to_json(self, parser):
         # Iterate through all arg groups, and create an OrderedDict of them.
@@ -65,3 +74,6 @@ class Wargy(object):
             else:
                 words.append(word.title())
         return " ".join(words)
+
+    def process_submission(self, d):
+        print(d)
