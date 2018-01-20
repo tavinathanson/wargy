@@ -6,11 +6,13 @@ class Wargy(object):
     def __init__(self,
                  app,
                  parser,
+                 submission_handler,
                  arg_types_override,
                  all_caps_words,
                  excluded_arg_groups):
         self.app = app
         self.parser = parser
+        self.submission_handler = submission_handler
         self.arg_types_override = arg_types_override
         self.all_caps_words = all_caps_words
         self.excluded_arg_groups = excluded_arg_groups
@@ -24,7 +26,8 @@ class Wargy(object):
             view_func=args_endpoint)
 
         def submit_endpoint():
-            self.process_submission(request.json)
+            # TODO: do something instead of printing
+            print(self.process_submission(request.json))
             return "OK"
         self.app.add_url_rule(
             "/wargy/api/v0.0.1/submit",
@@ -76,4 +79,12 @@ class Wargy(object):
         return " ".join(words)
 
     def process_submission(self, d):
-        print(d)
+        # TODO: can't assume that all args are prefixed with --, etc.
+        # TODO: -/_ replacement doesn't work if we started off with underscores
+        args_list = ["--{} {}".format(key.replace("_", "-"), value) for (key, value) in d.items()]
+        # Separate all args from their values in the list
+        args_list = " ".join(args_list).split(" ")
+        # Debugging
+        print(args_list)
+        args = self.parser.parse_args(args_list)
+        return self.submission_handler(args)
