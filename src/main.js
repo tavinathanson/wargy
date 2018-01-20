@@ -30,7 +30,10 @@ class ArgumentComponent extends React.Component {
     render() {
         var innerComponent = null;
         if (typeof(this.props.arg.default) === 'boolean' || this.props.arg.type === 'bool') {
-            innerComponent = <Checkbox toggle label={this.props.arg.human_arg} />;
+            innerComponent = <Checkbox toggle
+                                       label={this.props.arg.human_arg}
+                                       onChange={(e, { checked }) => this.props.handleChange(this.props.arg.arg, e, checked)}
+                                       value={this.props.inputValue} />;
         }
         else if (typeof(this.props.arg.default) === 'number' ||
                  this.props.arg.type === 'float' ||
@@ -115,13 +118,16 @@ export class InputComponent extends React.Component {
             body: body});
     };
 
-    handleChange(arg, event) {
+    handleChange(arg, event, checked) {
         var obj = {};
-        obj[arg] = event.target.value;
+        if (_.isUndefined(checked)) {
+            obj[arg] = event.target.value;
+        }
+        else {
+            obj[arg] = checked;
+        }
         this.setState(obj);
-        console.log(this.state);
     }
-
     componentDidMount() {
         fetch('/wargy/api/v0.0.1/args')
             .then(res => res.json())
