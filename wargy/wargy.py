@@ -26,9 +26,9 @@ class Wargy(object):
             view_func=args_endpoint)
 
         def submit_endpoint():
-            # TODO: do something instead of printing
-            print(self.process_submission(request.json))
-            return "OK"
+            # TODO: do something instead of assuming a DataFrame
+            df = self.process_submission(request.json)
+            return jsonify({"table_contents": df.to_dict("list")})
         self.app.add_url_rule(
             "/wargy/api/v0.0.1/submit",
             methods=["POST"],

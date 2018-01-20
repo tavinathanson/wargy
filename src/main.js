@@ -95,12 +95,74 @@ class ArgumentComponent extends React.Component {
     }
 }
 
+export class OutputComponent extends React.Component {
+    constructor(props) {
+        super(props);
+
+        // Input format:
+        // [{colname: [item, item, item]}, {colname: [item, ...]}, ...]
+    }
+
+    render() {
+        var headerCells = [];
+        var rowToCells = {};
+        this.props.contents.map(function(col, col_i) {
+            var firstEntry = Object.entries(col)[0];
+            var colName = firstEntry[0];
+            var colValues = firstEntry[1];
+
+            headerCells.push(<Table.HeaderCell>{colName}</Table.HeaderCell>);
+
+            colValues.map(function(colValue, row_i) {
+                if (_.isUndefined(rowToCells[row_i])) {
+                    rowToCells[row_i] = [];
+                }
+                rowToCells[row_i].push(<Table.Cell>{colValue}</Table.Cell>);
+            });
+        });
+
+        var tableElements = [];
+        tableElements.push(
+            <Table.Header>
+                <Table.Row>
+                    {headerCells}
+                </Table.Row>
+            </Table.Header>
+        );
+
+        var rowElements = [];
+        // TODO: make map vs. each usage consistent
+        // Iterate in numerical row order over the table
+        _.each(_.range(_size(rowToCells)), function(rowNum) {
+            var tableCells = rowToCells[rowNum];
+            rowElements.push(
+                <Table.Row>
+                    {tableCells}
+                </Table.Row>
+            );
+        });
+
+        tableElements.push(
+            <Table.Body>
+                {rowElements}
+            </Table.Body>
+        );
+
+        return (
+            <Table celled>
+                {tableElements}
+            </Table>
+        );
+    }
+}
+
 export class InputComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             error: null,
             isLoaded: false,
+            isTableLoaded: false,
             expanded: true
         };
         this.handleChange = this.handleChange.bind(this);
@@ -110,11 +172,19 @@ export class InputComponent extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
 
-        var body = JSON.stringify(_.omit(this.state, ['error', 'isLoaded', 'expanded', 'args']));
+        // TODO: don't hardcode this; too fragile
+        var body = JSON.stringify(_.omit(this.state, ['error', 'isLoaded', 'isTableLoaded', 'expanded', 'args']));
         fetch('/wargy/api/v0.0.1/submit', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
-            body: body});
+            body: body})
+            .then(res => res.json())
+            .then(
+                (result) => { this.setState({isTableLoaded: true, tableContents: result.table_contents}); },
+                (error) => { this.setState({isTableLoaded: true, error}); }
+            )
+            .then(() => console.log(this.state));
+        console.log(this.state);
     };
 
     handleChange(arg, event, checked) {
@@ -144,6 +214,7 @@ export class InputComponent extends React.Component {
             return <Loader active inline='centered'>Loading...</Loader>;
         } else {
             var elements = [];
+            // TODO: change to camelCase
             var group_names = [];
             var group_elements = {};
             var self = this; // Make accessible in the closure below
