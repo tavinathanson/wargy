@@ -25,12 +25,23 @@ function argContainsWords(arg, words) {
 class ArgumentComponent extends React.Component {
     constructor(props) {
         super(props);
+        if (!_.isEmpty(this.props.arg.default)) {
+            this.props.setArgState(this.props.arg.arg, this.props.arg.default);
+        }
     }
 
     render() {
         var innerComponent = null;
         if (typeof(this.props.arg.default) === 'boolean' || this.props.arg.type === 'bool') {
+            // Convert default value to true/false
+            var defaultChecked = false;
+            var defaultValue = this.props.getArgState(this.props.arg.arg);
+            if (_.isBoolean(defaultValue)) {
+                defaultChecked = defaultValue;
+            }
+
             innerComponent = <Checkbox toggle
+                                       checked={defaultChecked}
                                        label={this.props.arg.human_arg}
                                        onChange={(e, { checked }) => this.props.handleChange(this.props.arg.arg, e, checked)} />;
         }
@@ -41,6 +52,7 @@ class ArgumentComponent extends React.Component {
                 <Form.Field>
                     <label> {this.props.arg.human_arg}</label>
                     <Input size='small'
+                           value={this.props.getArgState(this.props.arg.arg)}
                            onChange={(e) => this.props.handleChange(this.props.arg.arg, e)} />
                 </Form.Field>
             );
@@ -78,6 +90,7 @@ class ArgumentComponent extends React.Component {
                 <Form.Field>
                     <label> {this.props.arg.human_arg}</label>
                     <Input size='small'
+                           value={this.props.getArgState(this.props.arg.arg)}
                            onChange={(e) => this.props.handleChange(this.props.arg.arg, e)} />
                 </Form.Field>
             );
@@ -149,10 +162,10 @@ export class OutputComponent extends React.Component {
         );
 
         return (
-            <div style={{"overflowX": "scroll"}}>
-            <Table compact size='small'>
-            {tableElements}
-            </Table>
+            <div style={{'overflowX': 'scroll'}}>
+                <Table compact size='small'>
+                    {tableElements}
+                </Table>
             </div>
         );
     }
@@ -169,6 +182,9 @@ export class InputComponent extends React.Component {
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+
+        this.setArgState = this.setArgState.bind(this);
+        this.getArgState = this.getArgState.bind(this);
     }
 
     handleSubmit(event) {
@@ -189,16 +205,27 @@ export class InputComponent extends React.Component {
         console.log(this.state);
     };
 
-    handleChange(arg, event, checked) {
+    setArgState(arg, value) {
         var obj = {};
-        if (_.isUndefined(checked)) {
-            obj[arg] = event.target.value;
-        }
-        else {
-            obj[arg] = checked;
-        }
+        obj[arg] = value;
         this.setState(obj);
     }
+
+    handleChange(arg, event, checked) {
+        var value = null;
+        if (_.isUndefined(checked)) {
+            value = event.target.value;
+        }
+        else {
+            value = checked;
+        }
+        this.setArgState(arg, value);
+    }
+
+    getArgState(arg) {
+        return this.state[arg];
+    }
+
     componentDidMount() {
         fetch('/wargy/api/v0.0.1/args')
             .then(res => res.json())
@@ -233,7 +260,9 @@ export class InputComponent extends React.Component {
                     group_elements[group_name].push(
                         <Grid.Column key={arg_i}>
                             <ArgumentComponent arg={arg}
-                                               handleChange={self.handleChange} />
+                                               handleChange={self.handleChange}
+                                               setArgState={self.setArgState}
+                                               getArgState={self.getArgState} />
                         </Grid.Column>
                     );
                 });

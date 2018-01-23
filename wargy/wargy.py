@@ -8,12 +8,14 @@ class Wargy(object):
                  parser,
                  submission_handler,
                  arg_types_override,
+                 defaults_override,
                  all_caps_words,
                  excluded_arg_groups):
         self.app = app
         self.parser = parser
         self.submission_handler = submission_handler
         self.arg_types_override = arg_types_override
+        self.defaults_override = defaults_override
         self.all_caps_words = all_caps_words
         self.excluded_arg_groups = excluded_arg_groups
         self.submitted = {}
@@ -60,6 +62,8 @@ class Wargy(object):
             arg_obj["type"] = str(action.type.__name__) if action.type is not None else None
             if action.dest in self.arg_types_override:
                 arg_obj["type"] = self.arg_types_override[action.dest]
+            if action.dest in self.defaults_override:
+                arg_obj["default"] = self.defaults_override[action.dest]
 
             d[group_title].append(arg_obj)
 
